@@ -1,9 +1,11 @@
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE RecordWildCards #-}
 
-module Chapter2.Records where
+module Chapter2.Records (ConnOptions(), connDefault) where
 
 import Data.Char (toUpper)
+
+-- Clients
 
 data ClientR =
       GovOrgR { clientRName :: String }
@@ -99,6 +101,25 @@ doe = IndividualR (PersonR "Jane" "Doe" Female) False
 sparrow = IndividualR (PersonR "Jack" "Sparrow" Male) False
 bear = IndividualR (PersonR "Nana" "Bear" Female) True
 alejandro = IndividualR (PersonR "Mr." "Alejandro" Male) True
+
+-- Default Values
+
+data ConnType = TCP | UDP deriving Show
+data UseProxy = NoProxy | Proxy String deriving Show
+data TimeOut = NoTimeOut | TimeOut Integer
+
+data ConnOptions = 
+    ConnOptions { connType :: ConnType
+                , connSpeed :: Integer
+                , connProxy :: UseProxy
+                , connCaching :: Bool
+                , connKeepAlive :: Bool
+                , connTimeOut :: TimeOut
+                }
+
+connDefault = ConnOptions TCP 0 NoProxy False False NoTimeOut
+
+
 
 -- Exercise 2.7 - Rewrite Time Machines with Records
 

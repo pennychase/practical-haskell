@@ -23,6 +23,7 @@ library
         Chapter2.SimpleFunctions
         Chapter2.DataTypes
         Chapter2.Exercises
+        Chapter2.Records
 
     -- Modules included in this library but not exported.
     -- other-modules:
