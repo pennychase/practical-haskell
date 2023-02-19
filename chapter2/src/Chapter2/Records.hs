@@ -1,7 +1,7 @@
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE RecordWildCards #-}
 
-module Chapter2.Records (ConnOptions(), connDefault) where
+module Chapter2.Records where
 
 import Data.Char (toUpper)
 
@@ -83,11 +83,12 @@ genderCount = foldr (\cl cnts -> countGender cl cnts) (CountsR 0 0 0)
 
 
 -- Example Clients
-nasa = GovOrgR "Nasa"
+nasa' = GovOrgR "Nasa"
+nttf' = GovOrgR "National Time Travel Foundation"
 
-pear = CompanyR "Pear Inc" 342 (PersonR "Jack" "Sparrow" Male) "CEO"
-tannenhaus = CompanyR "Tannenhaus Clockworks" 123 (PersonR "H.G." "Tannenhaus" Male) "Director"
-fourDegree = CompanyR { clientRName = "4Degree"
+pear' = CompanyR "Pear Inc" 342 (PersonR "Jack" "Sparrow" Male) "CEO"
+tannenhaus' = CompanyR "Tannenhaus Clockworks" 123 (PersonR "H.G." "Tannenhaus" Male) "Director"
+fourDegree' = CompanyR { clientRName = "4Degree"
                       , companyID = 321
                       , person = PersonR { firstName = "Mr."
                                          , lastName = "Alejandro" 
@@ -95,29 +96,21 @@ fourDegree = CompanyR { clientRName = "4Degree"
                                          }
                       , duty = "Chief Scientist"
                       } 
+wormhole' = CompanyR { clientRName = "Wormhole, Inc"
+                    , companyID = 42
+                    , person = PersonR { firstName = "Karl"
+                                       , lastName = "Schwarzchild"
+                                       , gender = Male
+                                       }
+                    , duty = "Director"
+                    }
 
-smith = IndividualR (PersonR "Jack" "Smith" Unknown) True
-doe = IndividualR (PersonR "Jane" "Doe" Female) False
-sparrow = IndividualR (PersonR "Jack" "Sparrow" Male) False
-bear = IndividualR (PersonR "Nana" "Bear" Female) True
-alejandro = IndividualR (PersonR "Mr." "Alejandro" Male) True
 
--- Default Values
-
-data ConnType = TCP | UDP deriving Show
-data UseProxy = NoProxy | Proxy String deriving Show
-data TimeOut = NoTimeOut | TimeOut Integer
-
-data ConnOptions = 
-    ConnOptions { connType :: ConnType
-                , connSpeed :: Integer
-                , connProxy :: UseProxy
-                , connCaching :: Bool
-                , connKeepAlive :: Bool
-                , connTimeOut :: TimeOut
-                }
-
-connDefault = ConnOptions TCP 0 NoProxy False False NoTimeOut
+smith' = IndividualR (PersonR "Jack" "Smith" Unknown) True
+doe' = IndividualR (PersonR "Jane" "Doe" Female) False
+sparrow' = IndividualR (PersonR "Jack" "Sparrow" Male) False
+bear' = IndividualR (PersonR "Nana" "Bear" Female) True
+alejandro' = IndividualR (PersonR "Mr." "Alejandro" Male) True
 
 
 
