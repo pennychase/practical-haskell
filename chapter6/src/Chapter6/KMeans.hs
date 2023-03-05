@@ -34,17 +34,17 @@ kMeans :: (Vector v, Vectorizable e v)
         -> Int                  -- number of centroids (i.e., k)
         -> [e]                  -- the information to be clustered
         -> Double               -- threshold
-        -> [v]                  -- final centroids
-kMeans i k points = kMeans' (i k points) points
+        -> (Int, [v])           -- final centroids and number of steps
+kMeans i k points = kMeans' (0, (i k points)) points
 
-kMeans' :: (Vector v, Vectorizable e v) => [v] -> [e] -> Double -> [v]
-kMeans' centroids points threshold =
+kMeans' :: (Vector v, Vectorizable e v) => (Int, [v]) -> [e] -> Double -> (Int, [v])
+kMeans' (steps, centroids) points threshold =
     let assignments = clusterAssignmentPhase centroids points
         oldNewCentroids = newCentroidPhase assignments
         newCentroids = map snd oldNewCentroids
     in  if shouldStop oldNewCentroids threshold
-        then newCentroids
-        else kMeans' newCentroids points threshold
+        then (steps, newCentroids)
+        else kMeans' (steps+1, newCentroids) points threshold
 
 
 clusterAssignmentPhase :: (Ord v, Vector v, Vectorizable e v) => [v] -> [e] -> M.Map v [e]
