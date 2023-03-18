@@ -1,45 +1,39 @@
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module Chapter6.Lenses where
 
 import Lens.Micro.Platform
 
-data Client i = GovOrg i String
-              | Company i String Person String
-              | Individual i Person
-        deriving Show
+-- Clients
 
-data Person = Person String String
-        deriving Show
+data Client i = GovOrg  { _identifier :: i
+                        , _name :: String
+                        }
+              | Company { _identifier :: i
+                        , _name :: String
+                        , _person:: Person
+                        , _duty :: String
+                        }
+              | Individual { _identifier :: i
+                           , _person :: Person
+                           }
+            deriving Show
 
--- Lenses by hand
+data Person = Person { _firstName :: String
+                     , _lastName :: String
+                     }
+            deriving Show
 
--- Simple lenses dor Person
--- Define the setter and getter functions for each lens
--- Call getter: person^.firstname
--- Call setter: firstName .~ "NewName" $ person
-firstName :: Lens' Person String
-firstName = lens (\(Person f _) -> f)
-                 (\(Person _ l) newF -> Person newF l)
-lastName :: Lens' Person String
-lastName = lens (\(Person _ l) -> l)
-                 (\(Person f _) newL -> Person f newL)
+-- Make lenses
+makeLenses ''Client
+makeLenses ''Person
+
 fullName :: Lens' Person String
 fullName = lens (\(Person f l) -> f <> " " <> l)
-                (\_ newFullName -> case words newFullName of
+                ( \_ newFullName -> case words newFullName of
                                         f:l:_ -> Person f l
                                         _ -> error "Incorrect name")
-
--- Full lens for Client identifier (can change the type when setting)
-identifier :: Lens (Client i) (Client j) i j
-identifier = lens (\case (GovOrg i _) -> i
-                         (Company i _ _ _) -> i
-                         (Individual i _) -> i)
-                  (\client newId -> case client of
-                         GovOrg _ n -> GovOrg newId n
-                         Company _ n p r -> Company newId n p r
-                         Individual _ p -> Individual newId p)
-
 
 -- Some clients
 
@@ -56,3 +50,37 @@ allison = Individual 103 (Person "Allison" "Gill")
 julie = Individual 104 (Person "Julie" "Moronuki")
 gil = Individual 105 (Person "Gil" "Mizrahi")
 sarah = Individual 106 (Person "Sarah" "Tabor")
+
+-- Time Machines
+
+data Direction = Past | Future | Both
+    deriving Show
+
+data TimeMachine =
+    TimeMachine { _tmManufacturer :: String
+                , _tmModel :: Int
+                , _tmName :: String
+                , _tmDirection :: Direction
+                , _tmPrice :: Double
+                }
+    deriving Show 
+
+-- Make Lenses
+makeLenses ''TimeMachine
+
+-- Change Price
+changePrice :: Double -> TimeMachine -> TimeMachine
+changePrice rate tm = tm & tmPrice %~ (\price -> price + price * rate)
+
+changePrices :: Double -> [TimeMachine] -> [TimeMachine]
+changePrices rate tms = tms & traversed.tmPrice %~ (\price -> price + price * rate)
+
+
+
+-- Some time machines
+
+tardis = TimeMachine "Time Lords Inc" 42 "The Tardis" Both 1000000
+timeSnitch = TimeMachine "Eva Time Travel" 101 "Time Snitch" Both 550000
+quantumLeap = TimeMachine "US Government" 1970 "QL Accelerator" Past 20000000
+theTM = TimeMachine "HG Wells" 1860 "TM" Future 650000
+
